@@ -1,20 +1,6 @@
-def sum( sum_arr, i, j):
-  if sum_arr[i][j] > 0:
-		return sum_arr[i][j]
-	m = 0
-	sum=0
-	for k,v in word_freq_hash.iteritems():
-		m+=1	
-		if m >= i:
-			sum+=v
-			if(m==j):
-				sum_arr[i][j] = sum
-				return sum		
-		
-			
 		
 		
-def fun(n):
+def create_optimal_bst(n):
 	cost = []
 	root = []
 	sum_arr = []
@@ -46,4 +32,17 @@ def fun(n):
 			print(str(root[row][col])+" "),
 			#print str(cost[row][col])+" "
 		print "\n"
-			
+
+def sum( sum_arr, i, j):
+  if sum_arr[i][j] > 0:
+		return sum_arr[i][j]
+	m = 0
+	sum=0
+	for k,v in word_freq_hash.iteritems():
+		m+=1	
+		if m >= i:
+			sum+=v
+			if(m==j):
+				sum_arr[i][j] = sum
+				return sum		
+		
