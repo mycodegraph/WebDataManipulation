@@ -37,6 +37,7 @@ def crawl(addr):
 	
 	
 if __name__ == "__main__":
+	start_time = time.clock()
 	addr = raw_input()
 	n = raw_input()	
 	n = int(n)
@@ -68,5 +69,7 @@ if __name__ == "__main__":
 	for k,v in word_freq_hash.iteritems():
 		print " %-45s %-15s %15s" % (k, "=>", str(v))
 		freq.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
-
+		
+	fun(len(word_freq_hash))
+	print time.clock() - start_time
 	
