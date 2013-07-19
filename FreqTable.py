@@ -84,7 +84,7 @@ if __name__ == "__main__":
 			if(m == n):
 				break	
 		#joining threads; although not required but generally with so many threads fetching data from amazon server,
-		#sometimes lead to blocking request from the system's IP	
+		#leads to "Server blocking request"	
 		for thread in Threads:
 			thread.join()
 			
