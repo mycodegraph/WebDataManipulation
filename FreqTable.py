@@ -9,7 +9,7 @@ freq = open("DeceptionPointFreq",'ab+');
 word_freq_hash = {}
 
 def prepare_list_amazon(soup):
-  pattern = re.compile('([a-zA-Z]+)')
+  	pattern = re.compile('([a-zA-Z]+)')
 
 	Rtable = soup.find(lambda tag: tag.name=='table' and tag.has_attr('id') and tag['id']=="productReviews").tr.td
 	text = str(Rtable.encode('utf-8'))
@@ -28,7 +28,7 @@ def prepare_list_amazon(soup):
 				
 				#print string
 			
-			f.write(line)
+				f.write(line)
 	
 	
 def crawl(addr):
