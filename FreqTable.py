@@ -1,15 +1,18 @@
-import urllib2
-import threading
-import re
 from bs4 import BeautifulSoup
+import threading
+import urllib2
+import os
+import time
+import re
+import stat
+
 
 Threads = []
-f = open("DeceptionPoint",'ab+');
-freq = open("DeceptionPointFreq",'ab+');
 word_freq_hash = {}
 
-def prepare_list_amazon(soup):
-  	pattern = re.compile('([a-zA-Z]+)')
+
+def prepare_list_amazon(file, soup):
+	pattern = re.compile('([a-zA-Z]+)')
 
 	Rtable = soup.find(lambda tag: tag.name=='table' and tag.has_attr('id') and tag['id']=="productReviews").tr.td
 	text = str(Rtable.encode('utf-8'))
@@ -21,55 +24,79 @@ def prepare_list_amazon(soup):
 				continue
 			array = re.findall(pattern,line)
 			for string in array:
+				string = string.lower()
 				if string in word_freq_hash:
 					word_freq_hash[string]+=1
 				else :
-					word_freq_hash[string]=1
-				
-				#print string
+					word_freq_hash[string]=1	
+			file.write(line)
 			
-				f.write(line)
 	
-	
-def crawl(addr):
+def crawl(file, addr):
 	html = urllib2.urlopen(addr).read();
-	prepare_list_amazon(BeautifulSoup(html))
+	prepare_list_amazon(file, BeautifulSoup(html))
+
 	
 	
 if __name__ == "__main__":
+	# Program start time
 	start_time = time.clock()
+	
+	#Amazon product review page( > 2) URL and No. of pages to fetch
 	addr = raw_input()
-	n = raw_input()	
-	n = int(n)
+	n = int(raw_input())		
+	
+	#Creation of file
+	temp = addr.split("/")[3]	
+	flag = 0
+	for folder in os.listdir('.'):
+		if folder == temp:
+			flag = 1
+	
+	if flag != 1:
+		os.makedirs(temp)
+		
+	if flag == 1:
+		os.remove(temp+"\\"+temp)
+		os.remove(temp+"\\"+temp + "-Freq")
+	
+	file = open(temp+"\\"+temp,'ab+')
+	freqFile = open(temp+"\\"+temp + "-Freq",'ab+')
+	
+	#Partitioning page URL to create new every time for every page
 	temp = addr.split("pageNumber=")[0]
 	temp += "pageNumber="
 	last = addr.split("pageNumber=")[1][1:]
-	index = len(temp)
 	
-	m=1
+	
+	m=0
 	while m != n:
-		for t in range(1, 10) :
+		#Creating 10 threads to fetch network data and print it to the file
+		for t in range(1, 20) :
 			addr = temp + str(m) + last
-			thread  = threading.Thread(target = crawl, args = (addr, ))
+			thread  = threading.Thread(target = crawl, args = (file, addr, ))
 			thread.start()
 			Threads.append(thread)
-			print "\n From:Thread: " + str(t) + " and Web Address: "+addr+" \n "
-
-			print "Waiting"
 			
-			for thread in Threads:
-				thread.join()
-				
-			print "Complete"
-			
-			if(m == n):
-				break
-				
+			print "\nFrom:Thread: " + str(t) + " and Web Address: " + addr
+			print "Waiting"	
 			m+=1
+			if(m == n):
+				break	
+		#joining threads; although not required but generally with so many threads fetching data from amazon server,
+		#sometimes lead to blocking request from the system's IP	
+		for thread in Threads:
+			thread.join()
+			
+		print "Complete"
+			
+			
 	for k,v in word_freq_hash.iteritems():
-		print " %-45s %-15s %15s" % (k, "=>", str(v))
-		freq.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
+		#print " %-45s %-15s %15s" % (k, "=>", str(v))
+		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
+	
 		
-	fun(len(word_freq_hash))
+	#create_optimal_bst(len(word_freq_hash))
 	print time.clock() - start_time
+
 	
