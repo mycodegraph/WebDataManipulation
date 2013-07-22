@@ -98,7 +98,7 @@ if __name__ == "__main__":
 	for k,v in word_freq_hash.iteritems():
 		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))	
 		
-	# Thid code calculates the eidt distance vallue for all strings in frequency table against the input string and 
+	# This code calculates the eidt distance vallue for all strings in frequency table against the input string and 
 	#prints the one with least "edit distance"
 	string1 = raw_input()	
 	min = 100000
