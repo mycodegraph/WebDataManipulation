@@ -5,6 +5,7 @@ import os
 import time
 import re
 import stat
+import sys
 
 
 Threads = []
@@ -96,12 +97,15 @@ if __name__ == "__main__":
 			
 			
 	for k,v in word_freq_hash.iteritems():
-		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))	
+		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
 		
-	# This code calculates the eidt distance vallue for all strings in frequency table against the input string and 
-	#prints the one with least "edit distance"
+# The below code is part of Dictionary search and Spell Checker, which consider product reviews as corpus (just trial implementation) 
+	
+	
+	# This code calculates the edit distance values for all strings in frequency table against the input string and 
+	# prints the one with least "edit distance"
 	string1 = raw_input()	
-	min = 100000
+	min = sys.maxint
 	temp=" "
 	for k,v in word_freq_hash.iteritems():
 		#print " %-45s %-15s %15s" % (k, "=>", str(v))
