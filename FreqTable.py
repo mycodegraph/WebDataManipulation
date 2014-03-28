@@ -99,6 +99,66 @@ if __name__ == "__main__":
 	for k,v in word_freq_hash.iteritems():
 		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
 		
+		
+	# Following code might give error beacuase it has been added recently in this file without running locally.
+	##	* Here for each product review, we are calculating "Document/review frequency for all the words"
+	##	* Then we calculate "Inverse Document Frequency for all the words" using idf = log(N/df)
+	##	* 
+	##
+	##
+	##
+	
+		
+	################################################################
+	
+	idfFile.write(" %-45s %-15s %15s %15s %15s %15s %15s\n" % ("String", "=>", "DF"," ", "Review No."," ","IDF"))
+	for k,v in word_idf.iteritems():
+		idfFile.write(" %-45s %-15s %15s %15s %15s %15s %15s\n" % (k, "=>", str(v[0])," ", str(v[1])," ", str(math.log(no_reviews[0]/v[0],10))))	
+		
+	rev_vec = []
+	max = 0
+	for h in rev_list:
+		vec = []
+		for k,v in h.iteritems():
+			#print math.log(no_reviews[0]/word_idf[k][0],10)
+			val = math.log(no_reviews[0]/word_idf[k][0],10)
+			revFile.write(" %-45s %-15s %15s %15s %15s\n" % (k, "=>", str(v)," ",val));
+			vec.append(val)
+		if max < len(vec):
+			max = len(vec)
+		rev_vec.append(vec)
+		revFile.write("\n\n")		
+	
+	final = []
+	for i in range(0,no_reviews[0]):
+		final.append([0 for _ in range(0,no_reviews[0])])
+		if len(rev_vec[i]) != max:
+			while len(rev_vec[i]) != max:
+				rev_vec[i].append(0)
+	
+	for i in range(0,no_reviews[0]):
+		magA = numpy.linalg.norm(rev_vec[i])
+		for j in range(0,no_reviews[0]):
+			if i != j:
+				d = numpy.dot(rev_vec[i],rev_vec[j])
+				magB = numpy.linalg.norm(rev_vec[j])
+				den  = (magA*magB)
+				if den != 0:
+					final[j][i] = final[i][j] = d/(magA*magB)
+				else:
+					final[j][i] = final[i][j] = 0
+					
+	for row in range(0,no_reviews[0]):
+		for col in range(0,no_reviews[0]):
+			matFile.write("%s " % (str(final[row][col])));
+		matFile.write(" \n ");
+	
+	################################################################
+		
+		
+		
+		
+		
 # The below code is part of Dictionary search and Spell Checker, which consider product reviews as corpus (just trial implementation) 
 	
 	
