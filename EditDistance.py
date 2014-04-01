@@ -1,27 +1,28 @@
-def _min(a,b,c):
-  if(a<=b):
-		if(c<=a):
-			return c
-		else:
-			return a
-	else:
-		if(c<=b):
-			return c
-		else:
-			return b
-		
+
 		
 def edit_cost(string1, string2, i, j, matrix):
-	if(i < 0 or j < 0):
-		return 0
-	if(matrix[i][j] > 0):
-		return matrix[i][j]
+	return edit_distance(string1, string2)
+
+
+def edit_distance(string1, string2):
+	m = len(string1)
+	n = len(string2)
 	
-	val=0
-	t=0
-	if(string1[i] != string2[j]):
-		val = 1
-	t = _min(edit_cost(string1, string2, i-1, j-1, matrix),edit_cost(string1, string2, i, j-1, matrix),edit_cost(string1, string2, i-1, j, matrix)) + val
-	matrix[i][j] = t
-	return matrix[i][j]
+	table = [[0 for x in xrange(n+1)] for x in xrange(m+1)]
+	
+	for i in xrange(1, n+1):
+		table[i][0] = i
 		
+	for i in xrange(1, m+1):
+		table[0][i] = i
+		
+	for i in xrange(1, n+1):
+		for j in xrange(1, m+1):
+			temp=0
+			if string2[m] != string1[n]:
+				temp=1
+			
+			table[i][j] = min(table[i-1][j-1]+temp,table[i-1][j],table[i][j-1])
+			
+	return table[n][m]
+	
