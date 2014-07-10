@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import threading
+import threading, lock
 import urllib2
 import os
 import time
@@ -7,10 +7,9 @@ import re
 import stat
 import sys
 
-
 Threads = []
 word_freq_hash = {}
-
+mutex = lock()
 
 def prepare_list_amazon(file, soup):
 	pattern = re.compile('([a-zA-Z]+)')
@@ -30,8 +29,11 @@ def prepare_list_amazon(file, soup):
 					word_freq_hash[string]+=1
 				else :
 					word_freq_hash[string]=1	
-			file.write(line)
-			
+			mutex.acquire();
+			try:
+				file.write(line)
+			finally:
+				mutex.release()
 	
 def crawl(file, addr):
 	proxy_support = urllib2.ProxyHandler({"http":"http://xxx.xxx.xx.xx:80"}) #Proxy address
@@ -88,13 +90,11 @@ if __name__ == "__main__":
 			if(m > n):
 				break	
 			
-		#joining threads; although not required but generally with so many threads fetching data from amazon server,
-		#leads to "Server blocking request"	
+		#joining threads	
 		for thread in Threads:
 			thread.join()
 			
 		print "Complete"
-			
 			
 	for k,v in word_freq_hash.iteritems():
 		freqFile.write(" %-45s %-15s %15s\n" % (k, "=>", str(v)))
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 	# Following code might give error beacuase it has been added recently in this file without running locally.
 	##	* Here for each product review, we are calculating "Document/review frequency for all the words"
 	##	* Then we calculate "Inverse Document Frequency for all the words" using idf = log(N/df)
-	##	* 
+	##
 	##
 	##
 	##
